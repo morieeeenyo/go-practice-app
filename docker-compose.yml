@@ -13,6 +13,14 @@ services:
       - db
     volumes:
       - .:/app
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: "test"
+      DB_USER: "tester"
+      DB_PASSWORD: "password"
+    networks:
+      - golang_practice_network
 
   db:
     container_name: db
@@ -21,20 +29,19 @@ services:
       dockerfile: db.Dockerfile
     tty: true
     ports:
-      - 3306:3306
+      - 5306:3306
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: "test"
-      MYSQL_USER: "tester"
-      MYSQL_PASSWORD: "password"
+      DB_NAME: "test"
+      DB_USER: "tester"
+      DB_PASSWORD: "password"
     volumes:
       - type: volume
         source: mysql_data
         target: /var/lib/mysql
     networks:
-      - default
+      - golang_practice_network
 
 networks:
-  default:
+  golang_practice_network:
 volumes:
   mysql_data:
