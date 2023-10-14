@@ -52,6 +52,7 @@ func (u TodoUsecase) Create(input CreateTodoInput) (CreateTodoOutput, error) {
 	if err != nil {
 		return CreateTodoOutput{}, err
 	}
+	// TODO: もしかしたら作成されたレコードじゃないかも。あとで直す
 	output := CreateTodoOutput{
 		ID:   Todo.ID,
 		Title:   Todo.Title,
