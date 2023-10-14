@@ -36,14 +36,14 @@ func (input *CreateTodoInput) FieldMap(r *http.Request) binding.FieldMap {
 	}
 }
 
-// ユーザーの作成APIのレスポンス
+// TODO作成APIのレスポンス
 type CreateTodoOutput struct {
 	ID   int64    `json:"id"`
 	Title string `json:"title"`
 	IsCompleted  int8    `json:"isCompleted"`
 }
 
-// ユーザーを作成
+// TODOを作成
 func (u TodoUsecase) Create(input CreateTodoInput) (CreateTodoOutput, error) {
 	Todo := models.Todo{
 		Title: input.Title,
