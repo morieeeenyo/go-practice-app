@@ -1,6 +1,8 @@
-CREATE TABLE todos (
-    id varchar(36) PRIMARY KEY,
-    title TEXT NOT NULL,
-    is_completed TINYINT NOT NULL, 
-    created_at TIMESTAMP NOT NULL
-);
+CREATE TABLE
+    todos (
+        id BIGINT AUTO_INCREMENT NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        is_completed TINYINT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP NOT NULL,
+        PRIMARY KEY (id)
+    );

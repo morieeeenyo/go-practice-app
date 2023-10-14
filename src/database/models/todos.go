@@ -23,7 +23,7 @@ import (
 
 // Todo is an object representing the database table.
 type Todo struct {
-	ID          string    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID          int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Title       string    `boil:"title" json:"title" toml:"title" yaml:"title"`
 	IsCompleted int8      `boil:"is_completed" json:"is_completed" toml:"is_completed" yaml:"is_completed"`
 	CreatedAt   time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
@@ -100,12 +100,12 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 }
 
 var TodoWhere = struct {
-	ID          whereHelperstring
+	ID          whereHelperint64
 	Title       whereHelperstring
 	IsCompleted whereHelperint8
 	CreatedAt   whereHelpertime_Time
 }{
-	ID:          whereHelperstring{field: "`todos`.`id`"},
+	ID:          whereHelperint64{field: "`todos`.`id`"},
 	Title:       whereHelperstring{field: "`todos`.`title`"},
 	IsCompleted: whereHelperint8{field: "`todos`.`is_completed`"},
 	CreatedAt:   whereHelpertime_Time{field: "`todos`.`created_at`"},
@@ -129,8 +129,8 @@ type todoL struct{}
 
 var (
 	todoAllColumns            = []string{"id", "title", "is_completed", "created_at"}
-	todoColumnsWithoutDefault = []string{"id", "title", "is_completed", "created_at"}
-	todoColumnsWithDefault    = []string{}
+	todoColumnsWithoutDefault = []string{"title", "created_at"}
+	todoColumnsWithDefault    = []string{"id", "is_completed"}
 	todoPrimaryKeyColumns     = []string{"id"}
 )
 
@@ -417,7 +417,7 @@ func Todos(mods ...qm.QueryMod) todoQuery {
 
 // FindTodo retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindTodo(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Todo, error) {
+func FindTodo(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Todo, error) {
 	todoObj := &Todo{}
 
 	sel := "*"
@@ -507,15 +507,26 @@ func (o *Todo) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	_, err = exec.ExecContext(ctx, cache.query, vals...)
+	result, err := exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
 		return errors.Wrap(err, "models: unable to insert into todos")
 	}
 
+	var lastID int64
 	var identifierCols []interface{}
 
 	if len(cache.retMapping) == 0 {
+		goto CacheNoHooks
+	}
+
+	lastID, err = result.LastInsertId()
+	if err != nil {
+		return ErrSyncFail
+	}
+
+	o.ID = int64(lastID)
+	if lastID != 0 && len(cache.retMapping) == 1 && cache.retMapping[0] == todoMapping["id"] {
 		goto CacheNoHooks
 	}
 
@@ -776,16 +787,27 @@ func (o *Todo) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColu
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	_, err = exec.ExecContext(ctx, cache.query, vals...)
+	result, err := exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
 		return errors.Wrap(err, "models: unable to upsert for todos")
 	}
 
+	var lastID int64
 	var uniqueMap []uint64
 	var nzUniqueCols []interface{}
 
 	if len(cache.retMapping) == 0 {
+		goto CacheNoHooks
+	}
+
+	lastID, err = result.LastInsertId()
+	if err != nil {
+		return ErrSyncFail
+	}
+
+	o.ID = int64(lastID)
+	if lastID != 0 && len(cache.retMapping) == 1 && cache.retMapping[0] == todoMapping["id"] {
 		goto CacheNoHooks
 	}
 
@@ -963,7 +985,7 @@ func (o *TodoSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 }
 
 // TodoExists checks if the Todo row exists.
-func TodoExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
+func TodoExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from `todos` where `id`=? limit 1)"
 
