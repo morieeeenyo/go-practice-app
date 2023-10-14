@@ -78,7 +78,7 @@ func (h *TodoHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// usecaseの初期化
 	TodoUsecase := usecase.NewTodoUsecase(ctx, tx)
-	// ユーザー作成実施
+	// TODO作成実施
 	response, err = TodoUsecase.Create(request)
 
 	// レスポンスをjsonに変換
