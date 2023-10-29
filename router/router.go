@@ -11,7 +11,7 @@ func Get() *chi.Mux {
 	todoHandler := handler.NewTodoHandler()
 	r.Route("/todos", func(r chi.Router) {
 		r.Post("/", todoHandler.Create)
-		// r.Get("/detail", todoHandler.Get)
+		r.Get("/", todoHandler.Get)
 	})
 	return r
 }

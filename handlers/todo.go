@@ -90,3 +90,56 @@ func (h *TodoHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	setSuccessResponse(w, res)
 }
+
+type GetTodoOutput struct {
+	ID   int64    `json:"id"`
+	Title string `json:"title"`
+	IsCompleted  int8    `json:"isCompleted"`
+}
+
+func (h *TodoHandler) Get(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var response usecase.GetTodoSlice
+	var res []byte
+
+	ctx := context.Background()
+
+	// dbのコネクション設定
+	conn, err := db.GetDBconnection()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// コネクションのクローズ
+	defer func() {
+		conn.Close()
+	}()
+
+	// トランザクションの開始
+	tx, err := conn.BeginTx(ctx, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// トランザクションのコミット or ロールバック
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		tx.Commit()
+	}()
+
+	// usecaseの初期化
+	TodoUsecase := usecase.NewTodoUsecase(ctx, tx)
+	response, err = TodoUsecase.Get()
+
+	// レスポンスをjsonに変換
+	res, err = json.Marshal(response)
+	if err != nil {
+		log.Println(err)
+		setErrorResponse(w, http.StatusInternalServerError)
+		return
+	}
+	setSuccessResponse(w, res)
+}
