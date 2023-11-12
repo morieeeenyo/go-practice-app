@@ -1,8 +1,8 @@
 FROM golang:1.19
 
-WORKDIR /app
+WORKDIR /app/backend
 
-COPY go.mod go.sum ./
+COPY ./backend/go.mod ./backend/go.sum ./
 
 RUN go install github.com/volatiletech/sqlboiler@latest
 RUN go install github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql@latest
