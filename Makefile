@@ -9,3 +9,6 @@ migrate-down:
 
 gen-code-from-db:
 	docker-compose exec app sqlboiler mysql --output ./backend/src/database/models --pkgname models --wipe --config ./backend/config.toml && cd src && go mod tidy
+
+start-frontend:
+	cd frontend && yarn dev
