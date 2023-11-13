@@ -1,25 +1,14 @@
+"use client"
+import useSWR from "swr"
 import { Todo } from "../types"
+import { get } from "@/config/axiosConfig"
 
 export const useTodos = () => {
-  const todos: Todo[] = [
-    {
-      id: 1,
-      title: "todo1",
-      isCompleted: false,
-    },
-    {
-      id: 2,
-      title: "todo2",
-      isCompleted: false,
-    },
-    {
-      id: 3,
-      title: "todo3",
-      isCompleted: true,
-    },
-  ]
+  const { data: todos, isLoading, error } = useSWR<Todo[]>("/todos", get)
 
   return {
-    todos
+    todos: todos ?? [],
+    isLoading,
+    error,
   }
 }
