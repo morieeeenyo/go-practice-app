@@ -1,9 +1,13 @@
+"use client"
 import React from "react"
 import { useTodos } from "../hooks/useTodos"
 import { TodoItem } from "./TodoItem"
 
 export const TodoList = () => {
-  const { todos } = useTodos()
+  const { todos, isLoading, error } = useTodos()
+
+  if (isLoading) return <div>Now Loading...</div>
+  if (error) return <div>Unexpected Error</div>
   return (
     <div
       style={{
