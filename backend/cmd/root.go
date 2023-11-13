@@ -9,9 +9,9 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
+	"github.com/rs/cors"
 	"github.com/togo-mentor/go-practice-app/router"
 )
-
 
 
 // rootCmd represents the base command when called without any subcommands
@@ -20,9 +20,12 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// サーバーの設定
 		r := router.Get()
+		handler := cors.New(cors.Options{
+				AllowedOrigins: []string{"http://localhost:3000"},
+		}).Handler(r)
 		srv := &http.Server{
 			Addr:    ":8080",
-			Handler: r,
+			Handler: handler,
 		}
 
 		// サーバーの起動
