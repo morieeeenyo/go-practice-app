@@ -1,6 +1,7 @@
 "use client"
 import React from "react"
 import { useTodos } from "../hooks/useTodos"
+import { TodoForm } from "./TodoForm"
 import { TodoItem } from "./TodoItem"
 
 export const TodoList = () => {
@@ -11,15 +12,24 @@ export const TodoList = () => {
   return (
     <div
       style={{
-        height: "50%",
+        minHeight: "50%",
         width: "50%",
         border: "1px solid #000",
+        padding: "1rem",
       }}
     >
-      <h4>やることリスト</h4>
+      <h4
+        style={{
+          margin: "0 0 1rem",
+        }}
+      >
+        やることリスト
+      </h4>
+      <TodoForm />
       <ul
         style={{
           margin: "auto",
+          paddingLeft: "2rem",
         }}
       >
         {todos.map((todo) => (
