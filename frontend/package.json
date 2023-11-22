@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.2",
     "@types/axios": "^0.14.0",
     "axios": "^1.6.1",
     "next": "14.0.2",
