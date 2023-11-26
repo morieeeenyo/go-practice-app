@@ -2,89 +2,46 @@ package usecase
 
 import (
 	"context"
-	"database/sql"
-	"net/http"
+	// "database/sql"
+	// "net/http"
 
+	"github.com/togo-mentor/go-practice-app/services"
 	"github.com/togo-mentor/go-practice-app/src/database/models"
-	"github.com/mholt/binding"
-	"github.com/volatiletech/sqlboiler/boil"
+	// "github.com/mholt/binding"
+	// "github.com/volatiletech/sqlboiler/boil"
+	// "github.com/labstack/echo"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
+type ITodoUsecase interface {
+	FindAllTodos(ctx context.Context) (models.TodoSlice, error)
+	CreateTodo(ctx context.Context, params *models.Todo) (*models.Todo, error)
+}
+
 type TodoUsecase struct {
-	ctx context.Context
-	tx  *sql.Tx
+	svc service.ITodoService
 }
 
-func NewTodoUsecase(ctx context.Context, tx *sql.Tx) *TodoUsecase {
+func NewTodoUsecase(svc service.ITodoService) ITodoUsecase  {
 	return &TodoUsecase{
-		ctx: ctx,
-		tx:  tx,
+		svc,
 	}
-}
-
-// TODO作成APIのリクエストパラメータ
-type CreateTodoInput struct {
-	Title string
-}
-
-// リクエストのマッピング。ポインターレシーバーにすること
-func (input *CreateTodoInput) FieldMap(r *http.Request) binding.FieldMap {
-	return binding.FieldMap{
-		&input.Title: "title",
-	}
-}
-
-// TODO作成APIのレスポンス
-type CreateTodoOutput struct {
-	ID   int64    `json:"id"`
-	Title string `json:"title"`
-	IsCompleted  int8    `json:"isCompleted"`
 }
 
 // TODOを作成
-func (u TodoUsecase) Create(input CreateTodoInput) (CreateTodoOutput, error) {
-	Todo := models.Todo{
-		Title: input.Title,
-	}
-	err := Todo.Insert(u.ctx, u.tx, boil.Infer())
+func (u TodoUsecase) CreateTodo(ctx context.Context, params *models.Todo) (*models.Todo, error) {
+	todo, err := u.svc.CreateTodo(ctx, params)
 	if err != nil {
-		return CreateTodoOutput{}, err
+		return nil, err
 	}
-	// TODO: もしかしたら作成されたレコードじゃないかも。あとで直す
-	output := CreateTodoOutput{
-		ID:   Todo.ID,
-		Title:   Todo.Title,
-		IsCompleted:   Todo.IsCompleted,
-	}
-	return output, nil
+	return todo, nil
 }
 
-// APIから取得したTodo1件分の情報
-type GetTodoOutput struct {
-	ID   int64    `json:"id"`
-	Title string `json:"title"`
-	IsCompleted  int8    `json:"isCompleted"`
-}
-
-type GetTodoSlice [] * GetTodoOutput
-
-// ユーザー情報の取得
-func (u TodoUsecase) Get() (GetTodoSlice, error) {
-	todos, err := models.Todos().All(u.ctx, u.tx)
+func (u TodoUsecase) FindAllTodos(ctx context.Context) (models.TodoSlice, error) {
+	todos, err := u.svc.FindAllTodos(ctx)
 	if err != nil {
 		return  nil, err
 	}
-	// TodoからGetTodoOutputに変換
-	var getTodoOutputSlice GetTodoSlice
-	for _, todo := range todos {
-			getTodoOutput := &GetTodoOutput{
-					ID:          todo.ID,
-					Title:       todo.Title,
-					IsCompleted: todo.IsCompleted,
-			}
-			getTodoOutputSlice = append(getTodoOutputSlice, getTodoOutput)
-	}
-	return getTodoOutputSlice, nil
+	return todos, nil
 }

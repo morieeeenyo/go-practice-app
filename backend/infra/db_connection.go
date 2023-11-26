@@ -1,4 +1,4 @@
-package db
+package infra
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func GetDBconnection() (*sql.DB, error) {
+func InitDBConnection() * sql.DB {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true",
 		os.Getenv("DB_USER"),
@@ -15,6 +15,10 @@ func GetDBconnection() (*sql.DB, error) {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
-	db, err := sql.Open("mysql", dsn)
-	return db, err
+	connection, err := sql.Open("mysql", dsn)
+	if err != nil {
+		panic("failed to connect database")
+	}
+	
+	return connection
 }
