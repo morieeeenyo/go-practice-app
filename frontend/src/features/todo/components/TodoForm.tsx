@@ -1,5 +1,5 @@
 import React from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -9,37 +9,62 @@ const validationSchema = z.object({
   }),
 })
 
-type FormValues = z.infer<typeof validationSchema>
+export type FormValues = z.infer<typeof validationSchema>
 
-export const TodoForm = () => {
+type Props = {
+  onCreateTodo: (data: FormValues) => Promise<void>
+  isMutating: boolean
+}
+
+export const TodoForm: React.FC<Props> = ({ onCreateTodo, isMutating }) => {
   const form = useForm<FormValues>({
     mode: "onChange",
     resolver: zodResolver(validationSchema),
+    defaultValues: {
+      title: "",
+    },
   })
 
   const {
+    reset,
+    control,
     register,
+    handleSubmit,
     formState: { errors, isValid },
   } = form
+
+  const onSubmit = async (data: FormValues) => {
+    await onCreateTodo(data).then(() => {
+      reset()
+    })
+  }
+
   return (
-    <div
+    <form
       style={{
         display: "flex",
         alignItems: "flex-start",
         padding: "0 0 1rem",
       }}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <div>
-        <input
-          {...register("title")}
+        <Controller
           name="title"
-          type="text"
-          placeholder="TODOのタイトルを入力してください"
-          style={{
-            marginRight: "2rem",
-            minWidth: "20rem",
-            display: "block",
-          }}
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <input
+              {...field}
+              type="text"
+              placeholder="TODOのタイトルを入力してください"
+              style={{
+                marginRight: "2rem",
+                minWidth: "20rem",
+                display: "block",
+              }}
+            />
+          )}
         />
         {errors.title && (
           <span
@@ -52,7 +77,7 @@ export const TodoForm = () => {
           </span>
         )}
       </div>
-      <button disabled={!isValid}>登録</button>
-    </div>
+      <button disabled={!isValid || isMutating}>登録</button>
+    </form>
   )
 }

@@ -3,9 +3,11 @@ import React from "react"
 import { useTodos } from "../hooks/useTodos"
 import { TodoForm } from "./TodoForm"
 import { TodoItem } from "./TodoItem"
+import { useCreateTodo } from "../hooks/useCreateTodo"
 
 export const TodoList = () => {
   const { todos, isLoading, error } = useTodos()
+  const { onCreateTodo, isMutating } = useCreateTodo()
 
   if (isLoading) return <div>Now Loading...</div>
   if (error) return <div>Unexpected Error</div>
@@ -25,7 +27,7 @@ export const TodoList = () => {
       >
         やることリスト
       </h4>
-      <TodoForm />
+      <TodoForm onCreateTodo={onCreateTodo} isMutating={isMutating} />
       <ul
         style={{
           margin: "auto",
