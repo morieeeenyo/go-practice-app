@@ -12,11 +12,11 @@ const validationSchema = z.object({
 export type FormValues = z.infer<typeof validationSchema>
 
 type Props = {
-  onSubmit: (data: FormValues) => Promise<void>
+  onCreateTodo: (data: FormValues) => Promise<void>
   isMutating: boolean
 }
 
-export const TodoForm: React.FC<Props> = ({ onSubmit, isMutating }) => {
+export const TodoForm: React.FC<Props> = ({ onCreateTodo, isMutating }) => {
   const form = useForm<FormValues>({
     mode: "onChange",
     resolver: zodResolver(validationSchema),
@@ -32,6 +32,13 @@ export const TodoForm: React.FC<Props> = ({ onSubmit, isMutating }) => {
     handleSubmit,
     formState: { errors, isValid },
   } = form
+
+  const onSubmit = async (data: FormValues) => {
+    await onCreateTodo(data).then(() => {
+      reset()
+    })
+  }
+
   return (
     <form
       style={{

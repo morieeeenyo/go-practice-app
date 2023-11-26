@@ -7,7 +7,7 @@ import { useCreateTodo } from "../hooks/useCreateTodo"
 
 export const TodoList = () => {
   const { todos, isLoading, error } = useTodos()
-  const { onSubmit, isMutating } = useCreateTodo()
+  const { onCreateTodo, isMutating } = useCreateTodo()
 
   if (isLoading) return <div>Now Loading...</div>
   if (error) return <div>Unexpected Error</div>
@@ -27,7 +27,7 @@ export const TodoList = () => {
       >
         やることリスト
       </h4>
-      <TodoForm onSubmit={onSubmit} isMutating={isMutating} />
+      <TodoForm onCreateTodo={onCreateTodo} isMutating={isMutating} />
       <ul
         style={{
           margin: "auto",

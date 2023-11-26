@@ -12,12 +12,12 @@ export const useCreateTodo = () => {
     AxiosError
   >("/todos", post)
 
-  const onSubmit = async (data: FormValues) => {
+  const onCreateTodo = async (data: FormValues) => {
     createTodo(data)
   }
 
   return {
-    onSubmit,
+    onCreateTodo,
     isMutating
   }
 }
