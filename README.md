@@ -8,14 +8,12 @@
 - Next.js
 - Typescript
 
-# 動作イメージ
-軽いローディング画面を挟んだのち、TODOリストが表示され画面上でTODOの追加ができる
+# 環境構築手順
+まず最初にGoおよびNodeのインストールを行います。
+開発時のバージョンはGo1.20系、Node18.12系です。
 
-https://github.com/morieeeenyo/go-practice-app/assets/64336740/81ce2463-175b-4ad6-a911-a9025f1952eb
-
-## 環境構築手順
-### バックエンド
-以下のコマンを実行して必要なパッケージをインストールします。
+## バックエンド
+以下のコマンドを実行して必要なパッケージをインストールします。
 テーブルの作成に必要なgolang-migrateと、ORMであるsqlboilerを動かすためのパッケージ、ホットリロードを使うためのairをインストールします。
 
 ```
@@ -33,8 +31,11 @@ go mod download && go mod verify
 make start-backend
 ```
 
-### フロントエンド
-以下のコマンを実行して必要なパッケージをインストールします。
+次にローカル環境に `go_practice_app_development` という名前でデータベースを作成してください。
+コマンドラインでもMySQLクライアントからでもOKです。
+
+## フロントエンド
+以下のコマンドを実行して必要なパッケージをインストールします。
 
 ```
 cd frontend
@@ -46,3 +47,13 @@ npm install
 ```
 make start-frontend
 ```
+
+localhost:3000にアクセスし、以下の画面が表示されていれば環境構築完了です。
+
+<img width="1439" alt="go-practice-app" src="https://github.com/morieeeenyo/go-practice-app/assets/64336740/238330de-91f7-4177-b9ba-519a612fdb63">
+
+# 動作イメージ
+軽いローディング画面を挟んだのち、TODOリストが表示されます。
+画面上でTODOの追加ができます。
+
+https://github.com/morieeeenyo/go-practice-app/assets/64336740/81ce2463-175b-4ad6-a911-a9025f1952eb
