@@ -51,7 +51,9 @@ npm install
 make start-frontend
 ```
 
-localhost:3000にアクセスし、以下の画面が表示されていれば環境構築完了です。
+
+
+バックエンド、フロントエンド両方のサーバー起動後localhost:3000にアクセスし、以下の画面が表示されていれば環境構築完了です。
 
 <img width="1439" alt="go-practice-app" src="https://github.com/morieeeenyo/go-practice-app/assets/64336740/238330de-91f7-4177-b9ba-519a612fdb63">
 
