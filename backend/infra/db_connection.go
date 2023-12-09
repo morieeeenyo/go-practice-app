@@ -3,17 +3,16 @@ package infra
 import (
 	"database/sql"
 	"fmt"
-	"os"
+	// "os"
 )
 
 func InitDBConnection() * sql.DB {
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
+		"%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true",
+		"root",
+		"127.0.0.1",
+		"3306",
+		"go_practice_app_development",
 	)
 	connection, err := sql.Open("mysql", dsn)
 	if err != nil {
