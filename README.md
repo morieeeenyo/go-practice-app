@@ -28,7 +28,7 @@ go install github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql@latest
 go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.15.2
 ```
 
-サーバー起動時は以下のコマンドを実行します。
+サーバー起動時はプロジェクトルートで以下のコマンドを実行します。
 
 ```
 make start-backend
@@ -45,7 +45,7 @@ cd frontend
 npm install
 ```
 
-サーバー起動時は以下のコマンドを実行します。
+サーバー起動時はプロジェクトルートで以下のコマンドを実行します。
 
 ```
 make start-frontend
