@@ -14,15 +14,18 @@
 
 ## バックエンド
 以下のコマンドを実行して必要なパッケージをインストールします。
-テーブルの作成に必要なgolang-migrateと、ORMであるsqlboilerを動かすためのパッケージ、ホットリロードを使うためのairをインストールします。
 
 ```
 cd backend
+go install github.com/cosmtrek/air@latest
+go mod download && go mod verify
+```
+
+次にテーブルの作成に必要なgolang-migrateと、ORMであるsqlboilerを動かすためのパッケージ、ホットリロードを使うためのairをインストールします。
+```
 go install github.com/volatiletech/sqlboiler@latest
 go install github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql@latest
 go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.15.2
-go install github.com/cosmtrek/air@latest
-go mod download && go mod verify
 ```
 
 サーバー起動時は以下のコマンドを実行します。
